@@ -8,7 +8,7 @@ from pprint import pprint
 
 csv.field_size_limit(sys.maxsize)  # used so the size limit exception will not pop up...
 
-
+'''
 def getTimeDiff(startTime, endTime):
     # return the time difference
     start = parse(startTime)
@@ -31,7 +31,7 @@ def getInfoAboutTimeStamps(fileName):
             timeDiff = getTimeDiff(start, fin)
             data.append(timeDiff)
         return data
-
+'''
 
 def writeInfoAboutTimeStampsToCSV(data):
     print 'writing to csv'
@@ -139,7 +139,7 @@ def IPAndContributionsCount(fileName):
             ip.append(MyModel.getIPFromRow(row))
         ipAndNumOfWorks, maxAmount = getIPAndNumOfWorksANDMaxAmount(ip)
         amountsVec = createAmountVec(ipAndNumOfWorks, maxAmount)
-        removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, 10)  # 10 percent
+        removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, MyModel.getPercentOfLeadersWeWantToRemove())  # 10 percent
 
 '''
 def createFileWithOnlyReleventRows(fileName):
@@ -175,7 +175,7 @@ def getIPAndTimeStamps(fileName, sessionTime):
         ipANDTimeStamps = []
         ip = []
         for row in creader:
-            rowIP, start, fin, duration, score, levelName = MyModel.getInfoAboutRow(row)
+            rowIP, start, fin = MyModel.getIPStartTimeAndFinTime(row)
             if rowIP not in ip:
                 ip.append(rowIP)
             ipANDTimeStamps.append((rowIP, start, fin))
@@ -238,7 +238,7 @@ def startAnalyzingAmountsGraphData():
 def sessionsSplit():
     print 'Starting to split the data from our model to sessions'
     fileName = MyModel.getFilename()
-    sessions = getIPAndTimeStamps(fileName, 1800)  # 30 minutes, 60 seconds per minutes
+    sessions = getIPAndTimeStamps(fileName, MyModel.getSizeOfSessionInSeconds())  # 30 minutes, 60 seconds per minutes
     print 'Writing sessions into csv file'
     with open(MyModel.getSessionsFilename(), 'wb') as csvfile:
         cwriter = csv.writer(csvfile, delimiter=',')
@@ -267,15 +267,98 @@ def sessionsSplit():
         if flag == 0:
             sessionsPerIP.append([s[0][0], '1'])
     print 'writing the file sessions per ip: '
-    with open('sessionsPerIP.csv', 'wb') as csvfile:
+    with open(MyModel.getSessionsPerIPFilename(), 'wb') as csvfile:
         cwriter = csv.writer(csvfile, delimiter=',')
         cwriter.writerow(['IP', 'Number of sessions'])
         for s in sessionsPerIP:
             cwriter.writerow([s[0], s[1]])
 
+def getIPAndLevelData(filename):
+    print 'Starting to get ip and level data'
+    with open(filename, 'rb') as csvfile:
+        creader = csv.reader(csvfile, delimiter=',')
+        a = creader.next()  # get rid of the first row (instructions...)
+        print 'Now getting the ip, level and data of each user who gave us information'
+        ipLevelAndData = []
+        for row in creader:
+            rowIP, startTime, finishTime, levelName, duration, score = MyModel.getInfoAboutRow(row)
+            flag = 0
+
+            stars = MyModel.getAmountOfStarsAchived(levelName, score)
+            passedOneStar = False
+            if (stars >= 1):
+                passedOneStar = True
+
+            for i in range(len(ipLevelAndData)):
+                if(ipLevelAndData[i][0] == rowIP and ipLevelAndData[i][1] == levelName):
+                    # update num of contributions
+                    ipLevelAndData[i][2] = ipLevelAndData[i][2] + 1
+                    # update total duration
+                    ipLevelAndData[i][3] = ipLevelAndData[i][3] + duration
+                    # update high score
+                    if(ipLevelAndData[i][4] < score):
+                        ipLevelAndData[i][4] = score
+                    # update max stars
+                    if (ipLevelAndData[i][5] < stars):
+                        ipLevelAndData[i][5] = stars
+                    # update exploited?
+                    if(ipLevelAndData[i][8] == False):
+                        if(ipLevelAndData[i][7] == True):
+                            if(passedOneStar == True):
+                                ipLevelAndData[i][8] = True
+                            else:
+                                if(ipLevelAndData[i][6] < finishTime):
+                                    ipLevelAndData[i][8] = True
+                        else:
+                            if(passedOneStar == True):
+                                if(ipLevelAndData[i][6] > finishTime):
+                                    ipLevelAndData[i][8] = True
+                                else:
+                                    ipLevelAndData[i][7] = True
+                                    ipLevelAndData[i][6] = finishTime
+                            else:
+                                if (ipLevelAndData[i][6] < finishTime):
+                                    ipLevelAndData[i][6] = finishTime
+
+                    flag = 1
+                    break
+            if(flag == 0):
+                ipLevelAndData.append([rowIP, levelName, 1, duration, score, stars, finishTime, passedOneStar, False])
+                # 0.ip, 1.levelName, 2.numOfContributions, 3.duration, 4.highestScore, 5.maxStars, 6.earliestFinishTimePassedOrLatestFinishTimeNotPassed, 7.passedOneStar, 8.exploited?
+        return ipLevelAndData
+
+def createAveragePerLevelForEachIP(ipLevelData):
+    ipAveragePerLevelData = []
+    for row in ipLevelData:
+        flag = 0
+        for i in range(len(ipAveragePerLevelData)):
+            if(row[0] == ipAveragePerLevelData[i][0]):
+                ipAveragePerLevelData[i][1] = ipAveragePerLevelData[i][1] + row[2]
+                ipAveragePerLevelData[i][2] = ipAveragePerLevelData[i][2] + row[3]
+                ipAveragePerLevelData[i][3] = ipAveragePerLevelData[i][3] + row[4]
+                ipAveragePerLevelData[i][4] = ipAveragePerLevelData[i][4] + row[5]
+                if(row[8] == True):
+                    ipAveragePerLevelData[i][5] = ipAveragePerLevelData[i][5] + 1
+                ipAveragePerLevelData[i][6] = ipAveragePerLevelData[i][6] + 1
+
+                flag = 1
+                break
+        if(flag == 0):
+            exploited = 0
+            if(row[8] == True):
+                exploited = 1
+            ipAveragePerLevelData.append([row[0], row[2], row[3], row[4], row[5], exploited, 1])
+            #                       0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.exploited amount, 6.levels amount
+    need to divide by levels amount
 
 def analizeGroupsOfUsers():
     print 'Starting to analize the data from our model to different groups of users'
+    filename = MyModel.getFilename()
+    sessionsFilename = MyModel.getSessionsPerIPFilename()
+    ipLevelData = getIPAndLevelData(filename)  # done this
+    ipAveragePerLevel = createAveragePerLevelForEachIP(ipLevelData)
+    ipSessionsAmount = getIPSessionsAmount(sessionsFilename)
+    merged = mergeSessionsAndRegularDataPerIP(ipAveragePerLevel, ipSessionsAmount)
 
 print 'Starting program'
 sessionsSplit()

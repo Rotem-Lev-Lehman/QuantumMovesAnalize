@@ -3,8 +3,17 @@ from dateutil.parser import parse
 def getFilename():
     return 'QuantumMoves_180306.csv'
 
+def getSizeOfSessionInSeconds():
+    return 1800
+
+def getPercentOfLeadersWeWantToRemove():
+    return 10
+
 def getSessionsFilename():
     return 'sessions.csv'
+
+def getSessionsPerIPFilename():
+    return 'sessionsPerIP.csv'
 
 def getAmountsFilename():
     return 'amounts.csv'
@@ -23,6 +32,8 @@ def getInfoAboutRow(row):
     # row[3] is the finish time for this contribution
     # row[4] is the score for this contribution
     # row[5] is the duration of time this contribution was done in
+    # row[6] is the level name for this contribution
+
     ip = row[0]
     fin = row[3]
     score = row[4]
@@ -40,8 +51,30 @@ def getInfoAboutRow(row):
 
     start = date + " " + str(f - tempParsed) + " " + timezone
     s = parse(start)
-    return (ip, start, fin, duration, score, levelName)
+
+    return (ip, s, f, levelName, duration, score)
 
 def getIPFromRow(row):
     return row[0]
 
+def getIPStartTimeAndFinTime(row):
+    # row[3] is the finish time for this contribution
+    ip = row[0]
+    fin = row[3]
+    duration = row[5]
+
+    finSplit = fin.split(" ")
+    date = finSplit[0]
+    timezone = finSplit[2]
+
+    f = parse(fin)
+    durrInSec = duration * 10
+    temp = date + " " + "00:00:" + str(durrInSec) + " " + timezone
+    tempParsed = parse(temp)
+
+    start = date + " " + str(f - tempParsed) + " " + timezone
+    s = parse(start)
+    return (ip, s, f)
+
+def getAmountOfStarsAchived(levelName, score):
+    need to do this function by the data given about every level
