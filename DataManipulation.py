@@ -3,6 +3,7 @@ import csv
 from dateutil.parser import parse
 from datetime import datetime
 import json
+import MyModel
 from pprint import pprint
 
 csv.field_size_limit(sys.maxsize)  # used so the size limit exception will not pop up...
@@ -135,13 +136,12 @@ def IPAndContributionsCount(fileName):
         print 'Now getting the ip of each user who gave us information'
         ip = []
         for row in creader:
-            # row[0] is the users ip, we will save that data so we can manipulate it now
-            ip.append(row[0])
+            ip.append(MyModel.getIPFromRow(row))
         ipAndNumOfWorks, maxAmount = getIPAndNumOfWorksANDMaxAmount(ip)
         amountsVec = createAmountVec(ipAndNumOfWorks, maxAmount)
-        removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, 10)  # 10 persent
+        removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, 10)  # 10 percent
 
-
+'''
 def createFileWithOnlyReleventRows(fileName):
     # creates a file with the colomns after removing those who didn't contribute(have no marks in the value of the annotations colomn
     # returns the new file's name
@@ -165,7 +165,7 @@ def createFileWithOnlyReleventRows(fileName):
                 #	print 'bad row:'
                 #	print row
         return newFileName
-
+'''
 
 def getIPAndTimeStamps(fileName, sessionTime):
     with open(fileName, 'rb') as csvfile:
@@ -175,14 +175,10 @@ def getIPAndTimeStamps(fileName, sessionTime):
         ipANDTimeStamps = []
         ip = []
         for row in creader:
-            # row[0] is the users ip, we will save that data so we can manipulate it now
-            if row[0] not in ip:
-                ip.append(row[0])
-            fin = row[3]  # hit_createdAt
-            start = row[7]  # session_createdAt
-            f = parse(fin)
-            s = parse(start)
-            ipANDTimeStamps.append((row[3], s, f))
+            rowIP, start, fin, duration, score, levelName = MyModel.getInfoAboutRow(row)
+            if rowIP not in ip:
+                ip.append(rowIP)
+            ipANDTimeStamps.append((rowIP, start, fin))
         # ipAndNumOfWorks,maxAmount = getIPAndNumOfWorksANDMaxAmount(ip)
         print 'Now sorting the data by ip,start time'
         ipANDTimeStamps.sort(key=lambda x: (x[0], x[1]))
@@ -233,25 +229,18 @@ def getIPAndTimeStamps(fileName, sessionTime):
         """
 
 
-def startAnalyzing():
-    print 'Starting to analize the data from "All_EtchACellData_WithoutNames.csv"'
-    fileName = 'QuantumMoves_180306.csv'
-    # fileName = 'Relevent_Rows_Only_From_All_EtchACellData_WithoutNames.csv'
-    # newFileName = createFileWithOnlyReleventRows(fileName)
-    # newFileName = 'Relevent_Rows_Only_From_All_EtchACellData_WithoutNames.csv'
+def startAnalyzingAmountsGraphData():
+    print 'Starting to analize the amounts graph data from the model'
+    fileName = MyModel.getFilename()
     IPAndContributionsCount(fileName)
 
 
-# print 'TimeStamps handlling'
-# data = getInfoAboutTimeStamps(newFileName)
-# writeInfoAboutTimeStampsToCSV(data)
-
 def sessionsSplit():
-    print 'Starting to split the data from "QuantumMoves_180306.csv" to sessions'
-    fileName = 'QuantumMoves_180306.csv'
+    print 'Starting to split the data from our model to sessions'
+    fileName = MyModel.getFilename()
     sessions = getIPAndTimeStamps(fileName, 1800)  # 30 minutes, 60 seconds per minutes
     print 'Writing sessions into csv file'
-    with open('sessions.csv', 'wb') as csvfile:
+    with open(MyModel.getSessionsFilename(), 'wb') as csvfile:
         cwriter = csv.writer(csvfile, delimiter=',')
         cwriter.writerow(['Session ID', 'IP', 'Start time', 'End time'])
         sid = 0
@@ -259,6 +248,7 @@ def sessionsSplit():
             for ip, start, fin in s:
                 cwriter.writerow([sid, ip, start, fin])
             sid = sid + 1
+    print 'writing the sessions info file'
     with open('sessionsInfo.csv', 'wb') as csvfile:
         cwriter = csv.writer(csvfile, delimiter=',')
         cwriter.writerow(['Session ID', 'IP', 'Number of works in session'])
@@ -266,6 +256,7 @@ def sessionsSplit():
         for s in sessions:
             cwriter.writerow([sid, s[0][0], len(s)])
             sid = sid + 1
+    print 'calculating the sessions per ip vector'
     sessionsPerIP = []
     for s in sessions:
         flag = 0
@@ -283,21 +274,13 @@ def sessionsSplit():
             cwriter.writerow([s[0], s[1]])
 
 
+def analizeGroupsOfUsers():
+    print 'Starting to analize the data from our model to different groups of users'
+
 print 'Starting program'
-# sessionsSplit()
-# startAnalyzing()
-# print parse('2016-05-07 21:03:42.338 UTC') - parse('2016-05-07 01:30:48.119 UTC')
-x = '2016-05-07 11:04:35.399 UTC'
-date = x.split(" ")[0]
-timezone = x.split(" ")[2]
-y = 0.4893827
-xp = parse(x)
-ym = y * 10  # look at : 'from datetime import timedelta'
-yms = date + " " + "00:00:" + str(ym) + " " + timezone
-yparsed = parse(yms)
-print str(yparsed)
-print str(xp)
-print str(xp - yparsed)
+sessionsSplit()
+startAnalyzingAmountsGraphData()
+
 print 'done'
 
 
