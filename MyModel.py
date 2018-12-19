@@ -2,7 +2,7 @@ from dateutil.parser import parse
 
 
 def getFilename():
-    return 'QuantumMoves_180306.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\QuantumMoves_180306.csv'
 
 
 def getSizeOfSessionInSeconds():
@@ -14,23 +14,23 @@ def getPercentOfLeadersWeWantToRemove():
 
 
 def getSessionsFilename():
-    return 'sessions.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\sessions.csv'
 
 
 def getSessionsPerIPFilename():
-    return 'sessionsPerIP.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\sessionsPerIP.csv'
 
 
 def getAmountsFilename():
-    return 'amounts.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\amounts.csv'
 
 
 def getIpAndNumOfWorksFilename():
-    return 'ipAndNumOfWorks.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\ipAndNumOfWorks.csv'
 
 
 def getLeadersFilename():
-    return 'leaders.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\leaders.csv'
 
 
 def getInfoAboutRow(row):
