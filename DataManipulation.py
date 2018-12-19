@@ -97,6 +97,16 @@ def writeLeadersToCSV(leaders):
             cswriter.writerow([currIP, currNum])
 
 
+def writeAllOfTheMergedDataToCSV(merged):
+    # 0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.Exploitation rate, 6.levels amount, 7.sessionsAmount
+    print 'writing merged data to csv'
+    with open('mergedDataPerIPForAnalyzingGroups.csv', 'wb') as mergedFile:
+        cswriter = csv.writer(mergedFile, delimiter=',')
+        cswriter.writerow(['IP', 'Contributions', 'Duration', 'Score', 'Stars', 'Exploitation Rate', 'Levels amount', 'Sessions Amount'])
+        for a, b, c, d, e, f, g, h in merged:
+            cswriter.writerow([a, b, c, d, e, f, g, h])
+
+
 def removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, persent):
     print 'removing leaders'
     sum0 = 0
@@ -328,6 +338,7 @@ def getIPAndLevelData(filename):
         return ipLevelAndData
 
 def createAveragePerLevelForEachIP(ipLevelData):
+    print 'now creating an average of all of the parameters needed'
     ipAveragePerLevelData = []
     for row in ipLevelData:
         flag = 0
@@ -347,9 +358,51 @@ def createAveragePerLevelForEachIP(ipLevelData):
             exploited = 0
             if(row[8] == True):
                 exploited = 1
-            ipAveragePerLevelData.append([row[0], row[2], row[3], row[4], row[5], exploited, 1])
-            #                       0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.exploited amount, 6.levels amount
-    need to divide by levels amount
+            ipAveragePerLevelData.append([row[0], float(row[2]), float(row[3]), float(row[4]), float(row[5]), float(exploited), 1])
+            #                              0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.exploited amount, 6.levels amount
+
+    for i in range(len(ipAveragePerLevelData)):
+        levelsAmount = float(ipAveragePerLevelData[i][6])
+        for j in range(len(5)):  # going from 1 to 5 in the parameters given (all but ip and levels amount)
+            ipAveragePerLevelData[i][j + 1] = float(float(ipAveragePerLevelData[i][j + 1]) / levelsAmount)
+
+    return ipAveragePerLevelData
+
+
+def getIPSessionsAmount(sessionsFileName):
+    print 'Starting to get ip sessions amount'
+    with open(sessionsFileName, 'rb') as csvfile:
+        creader = csv.reader(csvfile, delimiter=',')
+        a = creader.next()  # get rid of the first row (instructions...)
+        ipAndSessionsAmount = []
+        for row in creader:
+            ip = row[0]
+            amount = row[1]
+            ipAndSessionsAmount.append((ip, amount))
+
+        return ipAndSessionsAmount
+
+
+def mergeSessionsAndRegularDataPerIP(ipAveragePerLevel, ipSessionsAmount):
+    print 'now merging the ipAveragePerLevel with the ipSessionsAmount'
+    merged = []
+
+    print 'Now sorting the ipAveragePerLevel by ip'
+    ipAveragePerLevel.sort(key=lambda x: (x[0]))
+    #0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.exploited amount, 6.levels amount
+
+    print 'Now sorting the ipSessionsAmount by ip'
+    ipSessionsAmount.sort(key=lambda x: (x[0]))
+    #0.ip, 1.amountOfSessions
+
+    for i in range(len(ipAveragePerLevel)):
+        if ipAveragePerLevel[i][0] != ipSessionsAmount[i][0]:
+            print 'something is bad!!!'
+        else:
+            merged.append((ipAveragePerLevel[i][0], ipAveragePerLevel[i][1], ipAveragePerLevel[i][2], ipAveragePerLevel[i][3], ipAveragePerLevel[i][4], ipAveragePerLevel[i][5], ipAveragePerLevel[i][6], ipSessionsAmount[1]))
+            #                           0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.exploited amount, 6.levels amount, 7.sessionsAmount
+
+    return merged
 
 def analizeGroupsOfUsers():
     print 'Starting to analize the data from our model to different groups of users'
@@ -359,10 +412,13 @@ def analizeGroupsOfUsers():
     ipAveragePerLevel = createAveragePerLevelForEachIP(ipLevelData)
     ipSessionsAmount = getIPSessionsAmount(sessionsFilename)
     merged = mergeSessionsAndRegularDataPerIP(ipAveragePerLevel, ipSessionsAmount)
+    writeAllOfTheMergedDataToCSV(merged)
+
 
 print 'Starting program'
 sessionsSplit()
-startAnalyzingAmountsGraphData()
+#startAnalyzingAmountsGraphData()
+#analizeGroupsOfUsers()
 
 print 'done'
 

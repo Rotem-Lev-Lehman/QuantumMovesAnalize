@@ -36,8 +36,8 @@ def getInfoAboutRow(row):
 
     ip = row[0]
     fin = row[3]
-    score = row[4]
-    duration = row[5]
+    score = float(row[4])
+    duration = float(row[5])
     levelName = row[6]
 
     finSplit = fin.split(" ")
@@ -61,7 +61,7 @@ def getIPStartTimeAndFinTime(row):
     # row[3] is the finish time for this contribution
     ip = row[0]
     fin = row[3]
-    duration = row[5]
+    duration = float(row[5])
 
     finSplit = fin.split(" ")
     date = finSplit[0]
