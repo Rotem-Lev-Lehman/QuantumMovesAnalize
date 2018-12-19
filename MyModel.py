@@ -1,28 +1,37 @@
 from dateutil.parser import parse
 
+
 def getFilename():
     return 'QuantumMoves_180306.csv'
+
 
 def getSizeOfSessionInSeconds():
     return 1800
 
+
 def getPercentOfLeadersWeWantToRemove():
     return 10
+
 
 def getSessionsFilename():
     return 'sessions.csv'
 
+
 def getSessionsPerIPFilename():
     return 'sessionsPerIP.csv'
+
 
 def getAmountsFilename():
     return 'amounts.csv'
 
+
 def getIpAndNumOfWorksFilename():
     return 'ipAndNumOfWorks.csv'
 
+
 def getLeadersFilename():
     return 'leaders.csv'
+
 
 def getInfoAboutRow(row):
     # the parameter is a row in a csv file (separated by ',')
@@ -54,8 +63,10 @@ def getInfoAboutRow(row):
 
     return (ip, s, f, levelName, duration, score)
 
+
 def getIPFromRow(row):
     return row[0]
+
 
 def getIPStartTimeAndFinTime(row):
     # row[3] is the finish time for this contribution
@@ -76,5 +87,33 @@ def getIPStartTimeAndFinTime(row):
     s = parse(start)
     return (ip, s, f)
 
+
+def getAmountOfStarsFromScoreAndRanges(score, oneStarsMin, twoStarsMin, threeStarsMin):
+    if score < oneStarsMin:
+        return 0
+    if score < twoStarsMin:
+        return 1
+    if score < threeStarsMin:
+        return 2
+    return 3
+
+
 def getAmountOfStarsAchived(levelName, score):
-    need to do this function by the data given about every level
+    if levelName == 'Easiest Transport':
+        return getAmountOfStarsFromScoreAndRanges(score, 0.3, 0.6, 0.95)
+    if levelName == 'Easiest Transport 2':
+        return getAmountOfStarsFromScoreAndRanges(score, 0.15, 0.6, 0.9)
+    if levelName in ['Easiest Transport 3', 'Transport Move 3', 'Easiest Transport 4', 'Transport', 'Transport Move 1', 'Transport_Curved', 'Bring Home Water Wider', 'Bring Home Water Time', 'Bring Home Water Soft Spiked', 'Bring Home Water Mirror', 'Bring Home Water Mirror w static pit', 'Pour the Water 1', 'There And Back Again Improved', 'Bring to and from Static']:
+        return getAmountOfStarsFromScoreAndRanges(score, 0.3, 0.6, 0.9)
+    if levelName == 'First time tunneling':
+        return getAmountOfStarsFromScoreAndRanges(score, 0.25, 0.6, 0.9)
+    if levelName == 'Bring Home Water Simple':
+        return getAmountOfStarsFromScoreAndRanges(score, 0.3, 0.7, 0.9)
+    if levelName == 'Bring Home Water Simple OtherSide Improved':
+        return getAmountOfStarsFromScoreAndRanges(score, 0.5, 0.7, 0.9)
+    if levelName == 'Bring Home Water':
+        return getAmountOfStarsFromScoreAndRanges(score, 0.2, 0.6, 0.95)
+    if levelName in ['Bring Home and Transport', 'Bring Home Double Dynamic and actual Static']:
+        return getAmountOfStarsFromScoreAndRanges(score, 0.6, 0.8, 0.95)
+    if levelName == 'Transport_ShakeIt_Excited':
+        return getAmountOfStarsFromScoreAndRanges(score, 0.8, 0.9, 0.98)
