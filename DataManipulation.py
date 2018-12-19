@@ -6,7 +6,7 @@ import json
 import MyModel
 from pprint import pprint
 
-csv.field_size_limit(sys.maxsize)  # used so the size limit exception will not pop up...
+#csv.field_size_limit(sys.maxsize)  # used so the size limit exception will not pop up...
 
 '''
 def getTimeDiff(startTime, endTime):
@@ -209,7 +209,7 @@ def getIPAndTimeStamps(fileName, sessionTime):
                         lastFinish = fin
                         flag = 1
                         session.append((i, start, fin))
-                        print session
+                        #print session
                     else:
                         if (start - lastFinish).total_seconds() <= sessionTime:
                             session.append((i, start, fin))
@@ -363,7 +363,7 @@ def createAveragePerLevelForEachIP(ipLevelData):
 
     for i in range(len(ipAveragePerLevelData)):
         levelsAmount = float(ipAveragePerLevelData[i][6])
-        for j in range(len(5)):  # going from 1 to 5 in the parameters given (all but ip and levels amount)
+        for j in range(5):  # going from 1 to 5 in the parameters given (all but ip and levels amount)
             ipAveragePerLevelData[i][j + 1] = float(float(ipAveragePerLevelData[i][j + 1]) / levelsAmount)
 
     return ipAveragePerLevelData
@@ -378,7 +378,7 @@ def getIPSessionsAmount(sessionsFileName):
         for row in creader:
             ip = row[0]
             amount = row[1]
-            ipAndSessionsAmount.append((ip, amount))
+            ipAndSessionsAmount.append([ip, amount])
 
         return ipAndSessionsAmount
 
@@ -399,7 +399,7 @@ def mergeSessionsAndRegularDataPerIP(ipAveragePerLevel, ipSessionsAmount):
         if ipAveragePerLevel[i][0] != ipSessionsAmount[i][0]:
             print 'something is bad!!!'
         else:
-            merged.append((ipAveragePerLevel[i][0], ipAveragePerLevel[i][1], ipAveragePerLevel[i][2], ipAveragePerLevel[i][3], ipAveragePerLevel[i][4], ipAveragePerLevel[i][5], ipAveragePerLevel[i][6], ipSessionsAmount[1]))
+            merged.append((ipAveragePerLevel[i][0], ipAveragePerLevel[i][1], ipAveragePerLevel[i][2], ipAveragePerLevel[i][3], ipAveragePerLevel[i][4], ipAveragePerLevel[i][5], ipAveragePerLevel[i][6], ipSessionsAmount[i][1]))
             #                           0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.exploited amount, 6.levels amount, 7.sessionsAmount
 
     return merged
@@ -416,9 +416,9 @@ def analizeGroupsOfUsers():
 
 
 print 'Starting program'
-sessionsSplit()
+#sessionsSplit()
 #startAnalyzingAmountsGraphData()
-#analizeGroupsOfUsers()
+analizeGroupsOfUsers()
 
 print 'done'
 
