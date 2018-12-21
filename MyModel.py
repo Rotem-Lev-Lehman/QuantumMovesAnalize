@@ -2,7 +2,7 @@ from dateutil.parser import parse
 
 
 def getFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\QuantumMoves_180306.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\QuantumMoves_180306.csv'
 
 
 def getSizeOfSessionInSeconds():
@@ -13,24 +13,32 @@ def getPercentOfLeadersWeWantToRemove():
     return 10
 
 
+def getGroupsFileName():
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\mergedDataPerIPForAnalyzingGroups.csv'
+
+
+def getKMeansFileName():
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\kmeansGroupsDevision.csv'
+
+
 def getSessionsFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\sessions.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\sessions.csv'
 
 
 def getSessionsPerIPFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\sessionsPerIP.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\sessionsPerIP.csv'
 
 
 def getAmountsFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\amounts.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\amounts.csv'
 
 
 def getIpAndNumOfWorksFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\ipAndNumOfWorks.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\ipAndNumOfWorks.csv'
 
 
 def getLeadersFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\QuantumMovesData_180306\\results\\leaders.csv'
+    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\leaders.csv'
 
 
 def getInfoAboutRow(row):

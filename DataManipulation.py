@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 import MyModel
 from pprint import pprint
+from sklearn.cluster import KMeans
 
 #csv.field_size_limit(sys.maxsize)  # used so the size limit exception will not pop up...
 
@@ -100,7 +101,7 @@ def writeLeadersToCSV(leaders):
 def writeAllOfTheMergedDataToCSV(merged):
     # 0.ip,1.contributions, 2.duration, 3.score, 4.stars, 5.Exploitation rate, 6.levels amount, 7.sessionsAmount
     print 'writing merged data to csv'
-    with open('mergedDataPerIPForAnalyzingGroups.csv', 'wb') as mergedFile:
+    with open(MyModel.getGroupsFileName(), 'wb') as mergedFile:
         cswriter = csv.writer(mergedFile, delimiter=',')
         cswriter.writerow(['IP', 'Contributions', 'Duration', 'Score', 'Stars', 'Exploitation Rate', 'Levels amount', 'Sessions Amount'])
         for a, b, c, d, e, f, g, h in merged:
@@ -415,10 +416,39 @@ def analizeGroupsOfUsers():
     writeAllOfTheMergedDataToCSV(merged)
 
 
+def getAllGroupsData():
+    with open(MyModel.getGroupsFileName(), 'rb') as csvfile:
+        creader = csv.reader(csvfile, delimiter=',')
+        a = creader.next()  # get rid of the first row (instructions...)
+        data = []
+        for row in creader:
+            data.append([row[1],row[2],row[3],row[4],row[5],row[6],row[7]])
+
+        return data
+
+
+def writeKMeansAnalyzeToCSV(y_kmeans):
+    print 'writing k means analyze data to csv'
+    with open(MyModel.getKMeansFileName(), 'wb') as kmeansFile:
+        cswriter = csv.writer(kmeansFile, delimiter=',')
+        cswriter.writerow(['kmeansGroup', ' '])
+        for i in y_kmeans:
+            cswriter.writerow([i, ' '])
+
+
+def kMeansAnalyze(k):
+    print 'Starting to analyze ' + str(k) + ' means of the data calculated'
+    X = getAllGroupsData()
+    kmeans = KMeans(n_clusters=k)
+    kmeans.fit(X)
+    y_kmeans = kmeans.predict(X)
+    writeKMeansAnalyzeToCSV(y_kmeans)
+
 print 'Starting program'
 #sessionsSplit()
 #startAnalyzingAmountsGraphData()
-analizeGroupsOfUsers()
+#analizeGroupsOfUsers()
+kMeansAnalyze(6)
 
 print 'done'
 
