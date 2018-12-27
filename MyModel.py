@@ -1,8 +1,16 @@
 from dateutil.parser import parse
 
 
+def getMainPath():
+    return 'C:\Users\Rotem\Desktop\quantum moves\Quantum moves 2\\'
+
+
+def getResultsFolder():
+    return getMainPath() + 'results\\'
+
+
 def getFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\QuantumMoves_180306.csv'
+    return getMainPath() + 'sessions.csv'
 
 
 def getSizeOfSessionInSeconds():
@@ -14,31 +22,31 @@ def getPercentOfLeadersWeWantToRemove():
 
 
 def getGroupsFileName():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\mergedDataPerIPForAnalyzingGroups.csv'
+    return getResultsFolder() + 'mergedDataPerIPForAnalyzingGroups.csv'
 
 
 def getKMeansFileName():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\kmeansGroupsDevision.csv'
+    return getResultsFolder() + 'kmeansGroupsDevision.csv'
 
 
 def getSessionsFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\sessions.csv'
+    return getResultsFolder() + 'sessions.csv'
 
 
 def getSessionsPerIPFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\sessionsPerIP.csv'
+    return getResultsFolder() + 'sessionsPerIP.csv'
 
 
 def getAmountsFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\amounts.csv'
+    return getResultsFolder() + 'amounts.csv'
 
 
 def getIpAndNumOfWorksFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\ipAndNumOfWorks.csv'
+    return getResultsFolder() + 'ipAndNumOfWorks.csv'
 
 
 def getLeadersFilename():
-    return 'C:\\Users\\Rotem\\Desktop\\quantum moves\\Quantum moves 1\\QuantumMovesData_180306\\results\\leaders.csv'
+    return getResultsFolder() + 'leaders.csv'
 
 
 def getInfoAboutRow(row):
@@ -51,7 +59,7 @@ def getInfoAboutRow(row):
     # row[5] is the duration of time this contribution was done in
     # row[6] is the level name for this contribution
 
-    ip = row[0]
+    ip = row[3]
     fin = row[3]
     score = float(row[4])
     duration = float(row[5])
@@ -73,12 +81,12 @@ def getInfoAboutRow(row):
 
 
 def getIPFromRow(row):
-    return row[0]
+    return row[3]
 
 
 def getIPStartTimeAndFinTime(row):
     # row[3] is the finish time for this contribution
-    ip = row[0]
+    ip = row[3]
     fin = row[3]
     duration = float(row[5])
 

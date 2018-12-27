@@ -5,7 +5,6 @@ from datetime import datetime
 import json
 import MyModel
 from pprint import pprint
-from sklearn.cluster import KMeans
 
 #csv.field_size_limit(sys.maxsize)  # used so the size limit exception will not pop up...
 
@@ -142,7 +141,7 @@ def removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, 
 
 def IPAndContributionsCount(fileName):
     with open(fileName, 'rb') as csvfile:
-        creader = csv.reader(csvfile, delimiter=',')
+        creader = csv.reader(csvfile, delimiter=';')
         a = creader.next()  # get rid of the first row (instructions...)
         print 'Now getting the ip of each user who gave us information'
         ip = []
@@ -150,7 +149,11 @@ def IPAndContributionsCount(fileName):
             ip.append(MyModel.getIPFromRow(row))
         ipAndNumOfWorks, maxAmount = getIPAndNumOfWorksANDMaxAmount(ip)
         amountsVec = createAmountVec(ipAndNumOfWorks, maxAmount)
-        removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, MyModel.getPercentOfLeadersWeWantToRemove())  # 10 percent
+        #removeLeadersByXPersentAndWriteEveryThingToCSV(ipAndNumOfWorks, amountsVec, MyModel.getPercentOfLeadersWeWantToRemove())  # 10 percent
+        sum = 0
+        for i, num in amountsVec:
+            sum = sum + num
+        writeEveryThingToCSV(ipAndNumOfWorks,amountsVec, sum);
 
 '''
 def createFileWithOnlyReleventRows(fileName):
@@ -180,7 +183,7 @@ def createFileWithOnlyReleventRows(fileName):
 
 def getIPAndTimeStamps(fileName, sessionTime):
     with open(fileName, 'rb') as csvfile:
-        creader = csv.reader(csvfile, delimiter=',')
+        creader = csv.reader(csvfile, delimiter=';')
         a = creader.next()  # get rid of the first row (instructions...)
         print 'Now getting the ip of each user who gave us information'
         ipANDTimeStamps = []
@@ -287,7 +290,7 @@ def sessionsSplit():
 def getIPAndLevelData(filename):
     print 'Starting to get ip and level data'
     with open(filename, 'rb') as csvfile:
-        creader = csv.reader(csvfile, delimiter=',')
+        creader = csv.reader(csvfile, delimiter=';')
         a = creader.next()  # get rid of the first row (instructions...)
         print 'Now getting the ip, level and data of each user who gave us information'
         ipLevelAndData = []
@@ -437,7 +440,10 @@ def writeKMeansAnalyzeToCSV(y_kmeans):
 
 
 def kMeansAnalyze(k):
+    print 'importing k-means analyze tools'
+    from sklearn.cluster import KMeans
     print 'Starting to analyze ' + str(k) + ' means of the data calculated'
+
     X = getAllGroupsData()
     kmeans = KMeans(n_clusters=k)
     kmeans.fit(X)
@@ -445,10 +451,10 @@ def kMeansAnalyze(k):
     writeKMeansAnalyzeToCSV(y_kmeans)
 
 print 'Starting program'
-#sessionsSplit()
+sessionsSplit()
 #startAnalyzingAmountsGraphData()
 #analizeGroupsOfUsers()
-kMeansAnalyze(6)
+#kMeansAnalyze(6)
 
 print 'done'
 
