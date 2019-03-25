@@ -450,8 +450,28 @@ def kMeansAnalyze(k):
     y_kmeans = kmeans.predict(X)
     writeKMeansAnalyzeToCSV(y_kmeans)
 
+def getMinAndMaxDates():
+    with open(MyModel.getFilename(), 'rb') as csvfile:
+        creader = csv.reader(csvfile, delimiter=',')
+        a = creader.next()  # get rid of the first row (instructions...)
+        b = creader.next()
+        min = MyModel.getDate(b)
+        max = min
+        for row in creader:
+            curr = MyModel.getDate(row)
+            if(min > curr):
+                min = curr
+            if(max < curr):
+                max = curr
+
+        print 'min date = ' + str(min)
+        print ' '
+        print 'max date = ' + str(max)
+
+
 print 'Starting program'
-sessionsSplit()
+#sessionsSplit()
+getMinAndMaxDates()
 #startAnalyzingAmountsGraphData()
 #analizeGroupsOfUsers()
 #kMeansAnalyze(6)

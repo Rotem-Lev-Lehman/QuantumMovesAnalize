@@ -2,7 +2,7 @@ from dateutil.parser import parse
 
 
 def getMainPath():
-    return 'C:\Users\Rotem\Desktop\quantum moves\Quantum moves 2\\'
+    return 'C:\Users\Rotem\Desktop\quantum moves\Quantum moves 1\QuantumMovesData_180306\\'
 
 
 def getResultsFolder():
@@ -10,7 +10,7 @@ def getResultsFolder():
 
 
 def getFilename():
-    return getMainPath() + 'sessions.csv'
+    return getMainPath() + 'QuantumMoves_180306.csv'
 
 
 def getSizeOfSessionInSeconds():
@@ -47,6 +47,12 @@ def getIpAndNumOfWorksFilename():
 
 def getLeadersFilename():
     return getResultsFolder() + 'leaders.csv'
+
+
+def getDate(row):
+    strDate = row[3]
+    date = parse(strDate)
+    return date
 
 
 def getInfoAboutRow(row):
